@@ -33,16 +33,29 @@ You don't need to pay for Google Cloud to use Sign-In. It's a free service for h
     - Select **Web application**.
     - **Authorized JavaScript origins**:
       - `http://localhost:3000`
-      - `https://your-app-name.onrender.com`
+      - `https://fredium.onrender.com` (Replace with your actual Render URL)
     - **Authorized redirect URIs**:
       - `http://localhost:3000/api/auth/callback/google`
-      - `https://your-app-name.onrender.com/api/auth/callback/google`
-5.  After clicking "Create", a popup will show your **Client ID** and **Client Secret**. (If you miss it, click the Pencil icon next to the ID).
+      - `https://fredium.onrender.com/api/auth/callback/google` (**CRITICAL**: Replace `fredium.onrender.com` with your actual Render URL)
+5.  After clicking "Create", a popup will show your **Client ID** and **Client Secret**.
 
-### 2. Configure Environment Variables Locally
+### 🛑 Fixing "redirect_uri_mismatch" Error
 
-1.  In the **root folder** of this project, create a file named `.env`.
-2.  Copy these lines into `.env` and fill them in:
+If you see an "Access blocked: This app's request is invalid" error with code `400: redirect_uri_mismatch`:
+
+1.  Look at the screenshot you provided. Your "Authorised redirect URIs" has a placeholder: `https://your-domain.onrender.com/...`.
+2.  **You MUST change this** to your real Render URL.
+3.  Go back to **Google Cloud Console > Credentials**.
+4.  Edit your OAuth Client ID (click the Pencil icon).
+5.  Under **Authorised redirect URIs**, delete the one with `your-domain`.
+6.  Add: `https://fredium.onrender.com/api/auth/callback/google` (Replace `fredium` with your actual Render service name).
+7.  Save and wait 5 minutes for Google to update.
+
+### 2. Configure Environment Variables
+
+#### For Local Development:
+1.  In the **root folder**, create a file named `.env`.
+2.  Copy these lines into `.env`:
     ```
     DATABASE_URL="file:./dev.db"
     NEXTAUTH_URL="http://localhost:3000"
@@ -51,32 +64,13 @@ You don't need to pay for Google Cloud to use Sign-In. It's a free service for h
     GOOGLE_CLIENT_SECRET="your-secret"
     ```
 
----
-
-## 🚀 How to Deploy on Render (Step-by-Step)
-
-If you see a "Dockerfile not found" error, it means you selected Docker. **Do NOT use Docker.** Follow these steps:
-
-1.  Push this code to your GitHub repository.
-2.  Log in to [Render](https://dashboard.render.com/).
-3.  Click **New +** > **Web Service**.
-4.  Connect your GitHub repository.
-5.  On the configuration page:
-    - **Name**: `fredium`
-    - **Region**: Choose the one closest to you.
-    - **Runtime**: **Node** (NOT Docker).
-    - **Build Command**: `npm install && npx prisma generate && npx prisma db push && npm run build`
-    - **Start Command**: `npm run start`
-    - **Instance Type**: **Free**
-6.  Click **Advanced** and add the following **Environment Variables**:
-    - `NODE_VERSION`: `20`
-    - `NEXTAUTH_SECRET`: (Generate a random string)
-    - `NEXTAUTH_URL`: (Your Render URL, e.g., `https://fredium-xyz.onrender.com`)
-    - `GOOGLE_CLIENT_ID`: (From Google Console)
-    - `GOOGLE_CLIENT_SECRET`: (From Google Console)
-7.  Click **Create Web Service**.
-
----
+#### For Production (Render):
+1.  Go to your **Render Dashboard > Web Service > Environment**.
+2.  Add:
+    - `NEXTAUTH_URL`: `https://fredium.onrender.com` (Your actual URL)
+    - `NEXTAUTH_SECRET`: (A random secret)
+    - `GOOGLE_CLIENT_ID`: (From Google)
+    - `GOOGLE_CLIENT_SECRET`: (From Google)
 
 ## Getting Started Locally
 
