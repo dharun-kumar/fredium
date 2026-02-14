@@ -15,22 +15,27 @@ interface PostCardProps {
 }
 
 export default function PostCard({ post }: PostCardProps) {
+  // Remove markdown images from preview
+  const preview = post.content
+    .replace(/!\[.*?\]\(.*?\)/g, "")
+    .substring(0, 200)
+
   return (
     <div className="py-8 border-b last:border-0">
       <div className="flex items-center gap-2 mb-2">
         {post.author.image && (
-          <img src={post.author.image} alt="" className="w-6 h-6 rounded-full" />
+          <img src={post.author.image} alt="" className="w-6 h-6 rounded-full border object-cover" />
         )}
         <span className="text-sm font-medium text-gray-700">{post.author.name || "Anonymous"}</span>
         <span className="text-sm text-gray-500">·</span>
         <span className="text-sm text-gray-500">{format(new Date(post.createdAt), "MMM d, yyyy")}</span>
       </div>
       <Link href={`/posts/${post.id}`}>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2 hover:text-blue-600 transition leading-tight">
           {post.title}
         </h2>
-        <p className="text-gray-600 line-clamp-3 mb-4">
-          {post.content.substring(0, 200)}...
+        <p className="text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+          {preview}...
         </p>
       </Link>
     </div>

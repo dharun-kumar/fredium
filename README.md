@@ -33,30 +33,32 @@ You don't need to pay for Google Cloud to use Sign-In. It's a free service for h
     - Select **Web application**.
     - **Authorized JavaScript origins**:
       - `http://localhost:3000`
-      - `https://your-domain.onrender.com` (your Render URL)
+      - `https://fredium.onrender.com` (Replace with your actual Render URL)
     - **Authorized redirect URIs**:
       - `http://localhost:3000/api/auth/callback/google`
-      - `https://your-domain.onrender.com/api/auth/callback/google`
+      - `https://fredium.onrender.com/api/auth/callback/google` (**CRITICAL**: Replace `fredium.onrender.com` with your actual Render URL)
 5.  After clicking "Create", a popup will show your **Client ID** and **Client Secret**.
-    - *If you missed it*: Click the **Pencil icon (Edit)** next to your client ID in the Credentials list to see the Secret again.
 
 ### 2. Configure Environment Variables
 
 #### For Local Development:
-1.  In the **root folder** of this project (where `package.json` is), create a new file named `.env`.
-2.  Open `.env.example` and copy everything into your new `.env` file.
-3.  Fill in your Google Client ID and Secret.
-4.  Set `NEXTAUTH_SECRET` to any random string (e.g., `secret123`).
+1.  In the **root folder**, create a file named `.env`.
+2.  Copy these lines into `.env`:
+    ```
+    DATABASE_URL="file:./dev.db"
+    NEXTAUTH_URL="http://localhost:3000"
+    NEXTAUTH_SECRET="any-random-string"
+    GOOGLE_CLIENT_ID="your-id"
+    GOOGLE_CLIENT_SECRET="your-secret"
+    ```
 
 #### For Production (Render):
-Do **NOT** upload your `.env` file to GitHub. Instead:
-1.  Go to your **Render Dashboard**.
-2.  Select your Web Service > **Environment**.
-3.  Add the variables:
-    - `GOOGLE_CLIENT_ID`
-    - `GOOGLE_CLIENT_SECRET`
-    - `NEXTAUTH_URL`: Your site's URL (e.g., `https://fredium.onrender.com`)
-    - `NEXTAUTH_SECRET`: A random secret string.
+1.  Go to your **Render Dashboard > Web Service > Environment**.
+2.  Add:
+    - `NEXTAUTH_URL`: `https://fredium.onrender.com` (Your actual URL)
+    - `NEXTAUTH_SECRET`: (A random secret)
+    - `GOOGLE_CLIENT_ID`: (From Google)
+    - `GOOGLE_CLIENT_SECRET`: (From Google)
 
 ## Getting Started Locally
 

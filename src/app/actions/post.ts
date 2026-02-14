@@ -5,6 +5,19 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { revalidatePath } from "next/cache"
 
+async function checkOwnership(postId: string) {
+  const session = await getServerSession(authOptions)
+  if (!session?.user?.email) return null
+
+  const post = await prisma.post.findUnique({
+    where: { id: postId },
+    select: { author: { select: { email: true } } }
+  })
+
+  if (!post || post.author.email !== session.user.email) return null
+  return session.user.email
+}
+
 export async function createPost(title: string, content: string) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) throw new Error("Unauthorized")
@@ -26,6 +39,32 @@ export async function createPost(title: string, content: string) {
 
   revalidatePath("/")
   return post
+}
+
+export async function updatePost(id: string, title: string, content: string) {
+  const email = await checkOwnership(id)
+  if (!email) throw new Error("Unauthorized")
+
+  const post = await prisma.post.update({
+    where: { id },
+    data: { title, content }
+  })
+
+  revalidatePath("/")
+  revalidatePath(`/posts/${id}`)
+  return post
+}
+
+export async function deletePost(id: string) {
+  const email = await checkOwnership(id)
+  if (!email) throw new Error("Unauthorized")
+
+  await prisma.post.delete({
+    where: { id }
+  })
+
+  revalidatePath("/")
+  return { success: true }
 }
 
 export async function getPosts() {
