@@ -51,12 +51,35 @@ export default function PublishForm({ initialData }: PublishFormProps) {
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData.items
+    let hasImage = false
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf("image") !== -1) {
-        const file = items[i].getAsFile()
-        if (file) {
-          e.preventDefault()
-          handleImageUpload(file)
+        hasImage = true
+        break
+      }
+    }
+
+    if (hasImage) {
+      e.preventDefault()
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          const file = items[i].getAsFile()
+          if (file) handleImageUpload(file)
+        }
+      }
+    } else {
+      // Check if it's a data URL pasted as text
+      const pastedText = e.clipboardData.getData("text")
+      if (pastedText.startsWith("data:image/") && pastedText.includes(";base64,")) {
+        e.preventDefault()
+        const imageMarkdown = `\n![image](${pastedText})\n`
+        const textarea = textareaRef.current
+        if (textarea) {
+          const start = textarea.selectionStart
+          const end = textarea.selectionEnd
+          setContent(prev => prev.substring(0, start) + imageMarkdown + prev.substring(end))
+        } else {
+          setContent(prev => prev + imageMarkdown)
         }
       }
     }
@@ -66,11 +89,15 @@ export default function PublishForm({ initialData }: PublishFormProps) {
     e.preventDefault()
     setLoading(true)
     try {
+      const formData = new FormData()
+      formData.append("title", title)
+      formData.append("content", content)
+
       if (initialData) {
-        await updatePost(initialData.id, title, content)
+        await updatePost(initialData.id, formData)
         router.push(`/posts/${initialData.id}`)
       } else {
-        await createPost(title, content)
+        await createPost(formData)
         router.push("/")
       }
     } catch (error) {

@@ -18,9 +18,14 @@ async function checkOwnership(postId: string) {
   return session.user.email
 }
 
-export async function createPost(title: string, content: string) {
+export async function createPost(formData: FormData) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) throw new Error("Unauthorized")
+
+  const title = formData.get("title") as string
+  const content = formData.get("content") as string
+
+  if (!title || !content) throw new Error("Title and content are required")
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email }
@@ -41,9 +46,14 @@ export async function createPost(title: string, content: string) {
   return post
 }
 
-export async function updatePost(id: string, title: string, content: string) {
+export async function updatePost(id: string, formData: FormData) {
   const email = await checkOwnership(id)
   if (!email) throw new Error("Unauthorized")
+
+  const title = formData.get("title") as string
+  const content = formData.get("content") as string
+
+  if (!title || !content) throw new Error("Title and content are required")
 
   const post = await prisma.post.update({
     where: { id },
