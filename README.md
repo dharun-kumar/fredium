@@ -4,66 +4,50 @@ A blog platform similar to Medium or Substack, built with Next.js, Prisma, and N
 
 ## 🚀 Features
 
+- **Data Persistence**: Uses a persistent PostgreSQL database so your blogs are **not** deleted on redeploy.
 - **Public Reading**: Anyone can read stories without logging in.
-- **Google Sign-In (OAuth)**: Secure, free, and easy authentication.
+- **Google Sign-In (OAuth)**: Secure, free authentication.
 - **Rich Text Editor**: Support for Markdown with live preview.
 - **Image Support**: Paste images directly or upload from local (stored as Base64).
-- **Persistent Storage**: Uses PostgreSQL on Render to ensure your blogs are never lost.
-- **Profile Management**: Customize your name, profile picture (local upload), and bio.
+- **Profile Management**: Customize your name, profile picture, and bio.
 
 ## 🛠️ Setup Guide
 
-### 1. Get Google Client ID & Client Secret (100% Free)
+### 1. Get Google Client ID & Client Secret
+Follow the steps in the [Google Cloud Console](https://console.cloud.google.com/) to create an OAuth 2.0 Client ID.
 
-1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2.  Create a project named "Fredium".
-3.  Go to **APIs & Services > OAuth consent screen**.
-    - Choose **External**.
-    - Fill in "App name" and your email.
-4.  Go to **APIs & Services > Credentials**.
-    - Click **Create Credentials > OAuth client ID**.
-    - Select **Web application**.
-    - **Authorized JavaScript origins**:
-      - `http://localhost:3000`
-      - `https://fredium.onrender.com` (Your actual Render URL)
-    - **Authorized redirect URIs**:
-      - `http://localhost:3000/api/auth/callback/google`
-      - `https://fredium.onrender.com/api/auth/callback/google` (**IMPORTANT**: Must match your Render URL)
-5.  Copy the **Client ID** and **Client Secret**.
+### 2. Deployment on Render (To keep your blogs)
 
-### 2. Configure Environment Variables
+To ensure your blogs are saved permanently, you **must** use a PostgreSQL database. On Render, this is free.
 
-#### For Local Development:
-Create a `.env` file in the root folder:
-```
-DATABASE_URL="postgresql://user:password@localhost:5432/fredium"
-NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="any-random-string"
-GOOGLE_CLIENT_ID="your-id"
-GOOGLE_CLIENT_SECRET="your-secret"
-```
+#### Option A: Automatic (Recommended)
+1.  Click **New +** > **Blueprint**.
+2.  Connect this repository.
+3.  Render will automatically create both the **Web Service** and the **Database** and link them together.
 
-#### For Production (Render):
-Add these in **Render Dashboard > Web Service > Environment**:
-- `DATABASE_URL` (Auto-filled if using Render Postgres)
-- `NEXTAUTH_URL`: Your site's URL (e.g., `https://fredium.onrender.com`)
-- `NEXTAUTH_SECRET`: (A random string)
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
+#### Option B: Manual (If you already created the Web Service)
+1.  **Create a Database**: Click **New +** > **PostgreSQL**. Name it `fredium-db`.
+2.  **Get the URL**: Once created, copy the **Internal Database URL**.
+3.  **Link to Web Service**:
+    - Go to your Web Service > **Environment**.
+    - Add a new variable: `DATABASE_URL`.
+    - Paste the **Internal Database URL** you just copied.
+4.  **Add other variables**: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`.
 
-## 📦 Deployment on Render
+### 🛑 Common Error: "Environment variable not found: DATABASE_URL"
+This happens if you haven't linked your database to your web service. Follow the **Manual** steps above to fix it.
 
-This project uses **Render PostgreSQL** to maintain data across redeploys.
+## Getting Started Locally
 
-1. Connect your GitHub repository to Render.
-2. Render will detect `render.yaml` and create:
-   - A **Web Service** (Next.js app)
-   - A **PostgreSQL Database** (Persistent storage)
-3. Ensure you update `NEXTAUTH_URL` and Google credentials in the Render dashboard.
+1. **Install dependencies**: `npm install`
+2. **Setup Database**: Ensure you have a Postgres URL in your `.env`.
+3. **Generate Client**: `npx prisma generate`
+4. **Push Schema**: `npx prisma db push`
+5. **Run the app**: `npm run dev`
 
-## 💻 Tech Stack
+## Tech Stack
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma](https://www.prisma.io/)
-- **Auth**: [NextAuth.js](https://next-auth.js.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with Typography plugin
+- **Framework**: Next.js 15
+- **Database**: PostgreSQL with Prisma
+- **Auth**: NextAuth.js
+- **Styling**: Tailwind CSS
