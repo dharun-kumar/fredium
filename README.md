@@ -39,18 +39,6 @@ You don't need to pay for Google Cloud to use Sign-In. It's a free service for h
       - `https://fredium.onrender.com/api/auth/callback/google` (**CRITICAL**: Replace `fredium.onrender.com` with your actual Render URL)
 5.  After clicking "Create", a popup will show your **Client ID** and **Client Secret**.
 
-### 🛑 Fixing "redirect_uri_mismatch" Error
-
-If you see an "Access blocked: This app's request is invalid" error with code `400: redirect_uri_mismatch`:
-
-1.  Look at the screenshot you provided. Your "Authorised redirect URIs" has a placeholder: `https://your-domain.onrender.com/...`.
-2.  **You MUST change this** to your real Render URL.
-3.  Go back to **Google Cloud Console > Credentials**.
-4.  Edit your OAuth Client ID (click the Pencil icon).
-5.  Under **Authorised redirect URIs**, delete the one with `your-domain`.
-6.  Add: `https://fredium.onrender.com/api/auth/callback/google` (Replace `fredium` with your actual Render service name).
-7.  Save and wait 5 minutes for Google to update.
-
 ### 2. Configure Environment Variables
 
 #### For Local Development:
