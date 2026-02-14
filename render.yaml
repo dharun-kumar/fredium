@@ -11,7 +11,13 @@ services:
         generateValue: true
       - key: NEXTAUTH_URL
         value: https://your-domain.onrender.com # Update with your domain
-      - key: GOOGLE_CLIENT_ID
+      - key: EMAIL_SERVER_HOST
         sync: false
-      - key: GOOGLE_CLIENT_SECRET
+      - key: EMAIL_SERVER_PORT
+        sync: false
+      - key: EMAIL_SERVER_USER
+        sync: false
+      - key: EMAIL_SERVER_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
         sync: false
