@@ -46,7 +46,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
       <div className="flex items-center gap-3 mb-8 pb-8 border-b">
         {post.author.image && (
-          <img src={post.author.image} alt="" className="w-12 h-12 rounded-full border object-cover" />
+          <img src={post.author.image} alt="Author" className="w-12 h-12 rounded-full border object-cover" />
         )}
         <div>
           <p className="font-medium text-gray-900">{post.author.name}</p>
@@ -54,8 +54,14 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      <div className="prose prose-lg max-w-none prose-slate prose-img:rounded-lg prose-img:border">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      <div className="prose prose-lg max-w-none prose-slate prose-img:rounded-lg prose-img:border prose-a:text-blue-600">
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          components={{
+            // eslint-disable-next-line @next/next/no-img-element
+            img: ({...props}) => <img {...props} alt={props.alt || "Post image"} className="mx-auto" style={{maxWidth: '100%'}} />
+          }}
+        >
           {post.content}
         </ReactMarkdown>
       </div>

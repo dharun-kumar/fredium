@@ -1,9 +1,11 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { createPost, updatePost } from "../app/actions/post"
 import { useRouter } from "next/navigation"
-import { Image as ImageIcon, Loader2 } from "lucide-react"
+import { Image as ImageIcon, Loader2, Eye, Edit3 } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 interface PublishFormProps {
   initialData?: {
@@ -17,6 +19,7 @@ export default function PublishForm({ initialData }: PublishFormProps) {
   const [title, setTitle] = useState(initialData?.title || "")
   const [content, setContent] = useState(initialData?.content || "")
   const [loading, setLoading] = useState(false)
+  const [preview, setPreview] = useState(false)
   const router = useRouter()
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -88,10 +91,20 @@ export default function PublishForm({ initialData }: PublishFormProps) {
           required
         />
         <div className="flex items-center gap-4">
-          <label className="p-2 text-gray-500 hover:text-gray-900 cursor-pointer transition" title="Insert image">
-            <ImageIcon className="w-6 h-6" />
-            <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
-          </label>
+          <button
+            type="button"
+            onClick={() => setPreview(!preview)}
+            className="p-2 text-gray-500 hover:text-gray-900 transition"
+            title={preview ? "Edit" : "Preview"}
+          >
+            {preview ? <Edit3 className="w-6 h-6" /> : <Eye className="w-6 h-6" />}
+          </button>
+          {!preview && (
+            <label className="p-2 text-gray-500 hover:text-gray-900 cursor-pointer transition" title="Insert image">
+              <ImageIcon className="w-6 h-6" />
+              <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+            </label>
+          )}
           <button
             type="submit"
             disabled={loading}
@@ -103,18 +116,26 @@ export default function PublishForm({ initialData }: PublishFormProps) {
         </div>
       </div>
 
-      <div className="relative">
-        <textarea
-          ref={textareaRef}
-          placeholder="Tell your story... (Paste images directly here)"
-          className="w-full h-[60vh] text-xl border-none outline-none resize-none placeholder:text-gray-300 font-serif leading-relaxed"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          onPaste={handlePaste}
-          required
-        />
-      </div>
-      <p className="text-sm text-gray-400">Tip: You can paste images directly into the editor.</p>
+      {preview ? (
+        <div className="prose prose-lg max-w-none prose-slate prose-img:rounded-lg prose-img:border py-4 min-h-[60vh]">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            {content}
+          </ReactMarkdown>
+        </div>
+      ) : (
+        <div className="relative">
+          <textarea
+            ref={textareaRef}
+            placeholder="Tell your story... (Paste images directly here)"
+            className="w-full h-[60vh] text-xl border-none outline-none resize-none placeholder:text-gray-300 font-serif leading-relaxed"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onPaste={handlePaste}
+            required
+          />
+          <p className="text-sm text-gray-400 mt-4">Tip: You can paste images directly into the editor.</p>
+        </div>
+      )}
     </form>
   )
 }
