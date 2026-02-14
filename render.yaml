@@ -2,6 +2,7 @@ services:
   - type: web
     name: fredium
     runtime: node
+    region: oregon
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: npx prisma db push && npm run start
     envVars:
@@ -23,3 +24,4 @@ services:
 databases:
   - name: fredium-db
     plan: free
+    region: oregon

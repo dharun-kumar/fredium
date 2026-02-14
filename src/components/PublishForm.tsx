@@ -36,8 +36,7 @@ export default function PublishForm({ initialData }: PublishFormProps) {
       if (textarea) {
         const start = textarea.selectionStart
         const end = textarea.selectionEnd
-        const newContent = content.substring(0, start) + imageMarkdown + content.substring(end)
-        setContent(newContent)
+        setContent(prev => prev.substring(0, start) + imageMarkdown + prev.substring(end))
       } else {
         setContent(prev => prev + imageMarkdown)
       }
@@ -55,7 +54,10 @@ export default function PublishForm({ initialData }: PublishFormProps) {
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.indexOf("image") !== -1) {
         const file = items[i].getAsFile()
-        if (file) handleImageUpload(file)
+        if (file) {
+          e.preventDefault()
+          handleImageUpload(file)
+        }
       }
     }
   }
@@ -118,7 +120,13 @@ export default function PublishForm({ initialData }: PublishFormProps) {
 
       {preview ? (
         <div className="prose prose-lg max-w-none prose-slate prose-img:rounded-lg prose-img:border py-4 min-h-[60vh]">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              // eslint-disable-next-line @next/next/no-img-element
+              img: ({ node: _node, ...props }: { node?: unknown } & React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt || "Post image"} className="mx-auto" style={{ maxWidth: '100%' }} />
+            }}
+          >
             {content}
           </ReactMarkdown>
         </div>

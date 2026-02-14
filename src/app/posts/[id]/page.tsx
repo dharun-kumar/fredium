@@ -59,7 +59,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
           remarkPlugins={[remarkGfm]}
           components={{
             // eslint-disable-next-line @next/next/no-img-element
-            img: ({...props}) => <img {...props} alt={props.alt || "Post image"} className="mx-auto" style={{maxWidth: '100%'}} />
+            img: ({ node: _node, ...props }: { node?: unknown } & React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt || "Post image"} className="mx-auto" style={{ maxWidth: '100%' }} />
           }}
         >
           {post.content}
