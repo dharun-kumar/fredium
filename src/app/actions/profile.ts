@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache"
 export async function updateProfile(data: { name?: string, about?: string, image?: string }) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) throw new Error("Unauthorized")
-  if (process.env.ALLOWED_EMAIL && session.user.email !== process.env.ALLOWED_EMAIL) throw new Error("Forbidden")
 
   const updatedUser = await prisma.user.update({
     where: { email: session.user.email },
@@ -22,7 +21,6 @@ export async function updateProfile(data: { name?: string, about?: string, image
 export async function getProfile() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) throw new Error("Unauthorized")
-  if (process.env.ALLOWED_EMAIL && session.user.email !== process.env.ALLOWED_EMAIL) throw new Error("Forbidden")
 
   return await prisma.user.findUnique({
     where: { email: session.user.email }

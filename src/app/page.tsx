@@ -12,7 +12,7 @@ export default async function Home() {
       {posts.length === 0 ? (
         <p className="text-gray-500">No stories yet. Be the first to write one!</p>
       ) : (
-        posts.map((post: any) => (
+        posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))
       )}

@@ -5,10 +5,16 @@ A blog platform similar to Medium or Substack, built with Next.js, Prisma, and N
 ## Features
 
 - **Google OAuth**: Secure sign-in using Google.
-- **Publish Stories**: Easy-to-use editor to publish your blogs.
+- **Publish Stories**: Any logged-in user can publish their stories.
 - **Profile Management**: Customize your name, profile picture, and bio.
-- **Owner-Only Publishing**: Restrict publishing to a specific email using `ALLOWED_EMAIL`.
 - **Responsive Design**: Built with Tailwind CSS.
+
+## Storage and Database
+
+This project uses **Prisma** as an ORM and **PostgreSQL** for data persistence.
+
+**Note on Render Free Tier**:
+Render's Free Web Services have an ephemeral file system. This means if we used a local database like SQLite, all data would be lost every time the server restarts or redeploys. To ensure your blogs are saved permanently, we use **Render's Free PostgreSQL service**, which provides persistent storage even on the free plan.
 
 ## Getting Started
 
@@ -21,9 +27,7 @@ A blog platform similar to Medium or Substack, built with Next.js, Prisma, and N
    - Create a project on [Google Cloud Console](https://console.cloud.google.com/).
    - Configure OAuth consent screen and create credentials.
    - Add `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` to `.env`.
-5. **Setup Owner**:
-   - Add `ALLOWED_EMAIL=your-email@gmail.com` to `.env`.
-6. **Run the app**: `npm run dev`
+5. **Run the app**: `npm run dev`
 
 ## Deployment on Render
 
@@ -33,7 +37,7 @@ This project is ready to be deployed on Render using the included `render.yaml`.
 2. Render will automatically detect the `render.yaml` and setup the Web Service and PostgreSQL database.
 3. **Important**:
    - Update `NEXTAUTH_URL` in the Render dashboard to your actual domain.
-   - Add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and `ALLOWED_EMAIL` in the Render environment variables.
+   - Add your `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the Render environment variables.
 
 ## Tech Stack
 

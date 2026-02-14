@@ -8,7 +8,6 @@ import { revalidatePath } from "next/cache"
 export async function createPost(title: string, content: string) {
   const session = await getServerSession(authOptions)
   if (!session?.user?.email) throw new Error("Unauthorized")
-  if (process.env.ALLOWED_EMAIL && session.user.email !== process.env.ALLOWED_EMAIL) throw new Error("Forbidden")
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email }
